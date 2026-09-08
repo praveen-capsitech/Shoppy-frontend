@@ -10,6 +10,7 @@ import Manager from "./pages/Manager";
 import Products from "./pages/Products";
 import Register from "./pages/Register";
 import "./styles.css";
+import AddToCart from "./pages/AddToCart";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Products />} />
+            <Route path="/cart" element={<AddToCart />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route element={<ProtectedRoute roles={["Manager", "Admin"]} />}>

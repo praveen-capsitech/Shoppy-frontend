@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   },
   nav: { display: "flex", gap: "18px", alignItems: "center" },
   content: { maxWidth: "1100px", margin: "0 auto", padding: "32px 20px" },
-  brand: { fontWeight: 700 },
+  brand: { fontWeight: 700, cursor: "pointer" },
 });
 
 
@@ -36,17 +36,9 @@ export default function Layout() {
     <FluentProvider theme={webLightTheme}>
       <div className={s.root}>
         <header className={s.header}>
-          <Subtitle1 className={s.brand}>ShoppyApp</Subtitle1>
+          <Subtitle1 onClick={() => nav("/")} className={s.brand}>ShoppyApp</Subtitle1>
           <nav className={s.nav}>
-            <Link
-              href="/"
-              onClick={(e) => {
-                e.preventDefault();
-                nav("/");
-              }}
-            >
-              Products
-            </Link>
+
             {user?.role !== "Customer" && (
               <Link
                 href="/manager"
@@ -58,6 +50,22 @@ export default function Layout() {
                 Manager
               </Link>
             )}
+
+
+            {/* {
+              (user?.role === "Admin" || user?.role === "Manager") && (
+               <Link
+                href="/manager"
+                onClick={(e) => {
+                  e.preventDefault();
+                  nav("/manager");
+                }}
+              >
+                Manage Product
+              </Link>
+              )
+            } */}
+
             {user?.role === "Admin" && (
               <Link
                 href="/admin"
@@ -69,16 +77,32 @@ export default function Layout() {
                 Admin
               </Link>
             )}
+
+            {user?.role === "Customer" &&  (
+              <Link 
+                href="/cart" 
+                onClick={(e) => {e.preventDefault(); nav("/cart")}}
+                >
+                  Cart
+              </Link>
+            )}
+
             {user ? (
               <>
-                <Caption1>
-                  {user.name} ({user.role})
-                </Caption1>
                 <Button onClick={logout}>Logout</Button>
               </>
             ) : (
               <Button onClick={() => nav("/login")}>Login</Button>
             )}
+
+            {
+              user && (
+                <Caption1>
+                  {user?.name} <br/> ({user?.role})
+            </Caption1>
+              )
+            }
+            
           </nav>
         </header>
         <main className={s.content}>
