@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
 import type { Product } from "../types";
+import { AddToCartButton } from "../features/cart/AddToCartButton";
 const useStyles = makeStyles({
   grid: {
     display: "grid",
@@ -61,9 +62,16 @@ export default function Products() {
               <p>{p.description}</p>
               <b>₹{p.price.toFixed(2)}</b>
               <p>Stock: {p.stock}</p>
-              <Button appearance="primary" disabled={p.stock === 0}>
-                Add to cart 
-              </Button>
+              
+              {
+                p?.stock === 0 ? (
+                  <Button appearance="primary" disabled={p.stock === 0}>
+                    Currently Unavailable  
+                  </Button>
+                ) : (
+                  <AddToCartButton />
+                )
+              }
             </Card>
           ))}
         </div>

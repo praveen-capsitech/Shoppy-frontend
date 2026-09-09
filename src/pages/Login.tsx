@@ -6,6 +6,7 @@ import {
   MessageBar,
   Title1,
 } from "@fluentui/react-components";
+// import { ProgressIndicator } from '@fluentui/react/lib/ProgressIndicator';
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -35,6 +36,10 @@ export default function Login() {
 
   return (
     <Card style={{ maxWidth: 420, margin: "40px auto", padding: 28 }}>
+      {/* {
+        busy && <ProgressIndicator />
+      } */}
+       
       <Title1>Hi, Welcome Back</Title1>
       <form
         onSubmit={submit}
