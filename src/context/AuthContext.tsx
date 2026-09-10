@@ -6,13 +6,18 @@ import {
   type ReactNode,
 } from "react";
 import { api } from "../api/client";
-import type { User } from "../types";
+import type { Role, User } from "../types";
 
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    role?: Extract<Role, "Customer" | "Manager">,
+  ) => Promise<void>;
   logout: () => void;
 }
 
@@ -48,8 +53,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     authenticate("/auth/login", { email, password });
 
 
-  const register = (name: string, email: string, password: string) =>
-    authenticate("/auth/register", { name, email, password });
+  const register = (
+    name: string,
+    email: string,
+    password: string,
+    role: Extract<Role, "Customer" | "Manager"> = "Customer",
+  ) => authenticate("/auth/register", { name, email, password, role });
 
 
   const logout = () => {

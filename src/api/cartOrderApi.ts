@@ -50,29 +50,29 @@ export type Order = {
 };
 
 export const cartOrderApi = {
-  getCart: () => apiClient.get<Cart>("/api/cart"),
+  getCart: () => api.get<Cart>("/cart"),
 
   addToCart: (productId: string, quantity = 1) =>
-    apiClient.post<Cart>("/api/cart/items", { productId, quantity }),
+    api.post<Cart>("/cart/items", { productId, quantity }),
 
   updateCartItem: (productId: string, quantity: number) =>
-    apiClient.put<Cart>(`/api/cart/items/${productId}`, { quantity }),
+    api.put<Cart>(`/cart/items/${productId}`, { quantity }),
 
   removeCartItem: (productId: string) =>
-    apiClient.delete<Cart>(`/api/cart/items/${productId}`),
+    api.delete<Cart>(`/cart/items/${productId}`),
 
-  clearCart: () => apiClient.delete<void>("/api/cart"),
+  clearCart: () => api.delete<void>("/cart"),
 
   createCodOrder: (shippingAddress: ShippingAddress) =>
-    apiClient.post<Order>("/api/orders/cod", { shippingAddress }),
+    api.post<Order>("/orders/cod", { shippingAddress }),
 
-  getMyOrders: () => apiClient.get<Order[]>("/api/orders/mine"),
+  getMyOrders: () => api.get<Order[]>("/orders/mine"),
 
   cancelMyOrder: (id: string) =>
-    apiClient.post<Order>(`/api/orders/mine/${id}/cancel`, {}),
+    api.post<Order>(`/orders/mine/${id}/cancel`, {}),
 
-  getManageOrders: () => apiClient.get<Order[]>("/api/orders/manage"),
+  getManageOrders: () => api.get<Order[]>("/orders/manage"),
 
   updateOrderStatus: (id: string, status: OrderStatus) =>
-    apiClient.patch<Order>(`/api/orders/manage/${id}/status`, { status }),
+    api.patch<Order>(`/orders/manage/${id}/status`, { status }),
 };

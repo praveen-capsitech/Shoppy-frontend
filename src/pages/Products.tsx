@@ -8,20 +8,24 @@ import {
   makeStyles,
 } from "@fluentui/react-components";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import type { Product } from "../types";
 import { AddToCartButton } from "../features/cart/AddToCartButton";
+
 const useStyles = makeStyles({
   grid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
-    gap: 18,
+    gap: "18px",
   },
-  card: { padding: 18 },
-  img: { width: "100%", height: 170, objectFit: "cover", borderRadius: 8 },
+  card: { padding: "18px",cursor:"pointer" },
+  img: { width: "100%", height: "170px", objectFit: "cover", borderRadius: "8px" },
 });
+
 export default function Products() {
   const s = useStyles();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -54,7 +58,7 @@ export default function Products() {
       ) : (
         <div className={s.grid}>
           {filtered.map((p) => (
-            <Card key={p.id} className={s.card}>
+            <Card key={p.id} className={s.card} onClick={() => navigate(`/products/${p.id}`)}>
               {p.imageUrl && (
                 <img className={s.img} src={p.imageUrl} alt={p.name} />
               )}
@@ -69,9 +73,12 @@ export default function Products() {
                     Currently Unavailable  
                   </Button>
                 ) : (
-                  <AddToCartButton />
+                  <AddToCartButton productId={p.id} />
                 )
               }
+              {/* <Button appearance="secondary">
+                View details
+              </Button> */}
             </Card>
           ))}
         </div>

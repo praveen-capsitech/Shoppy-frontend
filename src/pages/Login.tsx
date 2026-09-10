@@ -12,7 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +26,7 @@ export default function Login() {
 
     try {
       await login(email, password);
-      nav("/");
+        nav("/");
     } catch (err: any) {
       setError(err.response?.data?.message ?? "Login failed.");
     } finally {

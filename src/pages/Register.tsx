@@ -7,12 +7,15 @@ import {
   Title1,
 } from "@fluentui/react-components";
 import { FormEvent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Register() {
   const { register } = useAuth();
+  const location = useLocation();
   const nav = useNavigate();
+  const isManagerRegistration = location.pathname === "/register/manager";
+  const role = isManagerRegistration ? "Manager" : "Customer";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,8 +28,8 @@ export default function Register() {
     setBusy(true);
     
     try {
-      await register(name, email, password);
-      nav("/");
+      await register(name, email, password, role);
+      nav(isManagerRegistration ? "/manage/products" : "/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.message ?? "Registration failed.");
     } finally {
@@ -36,7 +39,9 @@ export default function Register() {
 
   return (
     <Card style={{ maxWidth: 420, margin: "40px auto", padding: 28 }}>
-      <Title1>Create account</Title1>
+      <Title1>
+        {isManagerRegistration ? "Create manager account" : "Create customer account"}
+      </Title1>
       <form
         onSubmit={submit}
         style={{ display: "grid", gap: 16, marginTop: 24 }}
@@ -60,11 +65,21 @@ export default function Register() {
           />
         </Field>
         <Button appearance="primary" type="submit" disabled={busy}>
-          {busy ? "Creating..." : "Create account"}
+          {busy ? "Creating..." : `Create ${role.toLowerCase()} account`}
         </Button>
         <span>
           Already registered? <Link to="/login">Sign in</Link>
         </span>
+        {isManagerRegistration ? (
+          <span>
+            Shopping instead? <Link to="/register">Sign up as a customer</Link>
+          </span>
+        ) : (
+          <span>
+            Manage products and orders?{" "}
+            <Link to="/register/manager">Sign up as a manager</Link>
+          </span>
+        )}
       </form>
     </Card>
   );

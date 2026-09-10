@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   Button,
-  Caption1,
   FluentProvider,
   Link,
   makeStyles,
@@ -9,18 +8,16 @@ import {
   tokens,
   webLightTheme,
 } from "@fluentui/react-components";
+import {
+  Cart24Regular,
+} from "@fluentui/react-icons";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-import { ContextualMenuItemType, IContextualMenuProps } from '@fluentui/react/lib/ContextualMenu';
+import { IContextualMenuProps } from '@fluentui/react/lib/ContextualMenu';
 import { useConst } from '@fluentui/react-hooks';
-import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
-import { Panel } from '@fluentui/react/lib/Panel';
-import { useBoolean } from '@fluentui/react-hooks';
-// import AddToCart from '../pages/AddToCart';
-
-const buttonStyles = { root: { marginRight: 8 } };
-
+import { DefaultButton } from '@fluentui/react/lib/Button';
+import { CartDrawer } from '../features/cart/CartDrawer';
 
 const useStyles = makeStyles({
   root: { minHeight: "100vh", backgroundColor: tokens.colorNeutralBackground2 },
@@ -33,7 +30,7 @@ const useStyles = makeStyles({
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
   },
   nav: { display: "flex", gap: "18px", alignItems: "center" },
-  content: { maxWidth: "1100px", margin: "0 auto", padding: "32px 20px" },
+  content: {  margin: "0 auto", padding: "44px 30px" },
   brand: { fontWeight: 700, cursor: "pointer" },
 });
 
@@ -43,30 +40,16 @@ export default function Layout() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
 
+
   const menuProps = useConst<IContextualMenuProps>(() => ({
     shouldFocusOnMount: true,
     items: [
       { key: 'user', text: user?.name,  disabled: true, },
-      { key: 'account', text: 'Account', onClick: () => console.log('Account') },
       { key: 'logout', text: 'Logout', onClick: () => logout() },
     ],
   }));
 
-    const [isOpen, { setTrue: openPanel, setFalse: dismissPanel }] = useBoolean(false);
-
-  // This panel doesn't actually save anything; the buttons are just an example of what
-  // someone might want to render in a panel footer.
-  const onRenderFooterContent = React.useCallback(
-    () => (
-      <div>
-         <DefaultButton onClick={dismissPanel}  styles={buttonStyles}>Cancel</DefaultButton>
-        <PrimaryButton onClick={dismissPanel}>
-          Continue
-        </PrimaryButton>
-      </div>
-    ),
-    [dismissPanel],
-  );
+  const [isCartOpen, setIsCartOpen] = React.useState(false);
 
   return (
     <FluentProvider theme={webLightTheme}>
@@ -75,52 +58,68 @@ export default function Layout() {
           <Subtitle1 onClick={() => nav("/")} className={s.brand}>ShoppyApp</Subtitle1>
           <nav className={s.nav}>
 
-            {user?.role !== "Customer" && (
-              <Link
-                href="/manager"
-                onClick={(e) => {
-                  e.preventDefault();
-                  nav("/manager");
-                }}
-              >
-                Manager
-              </Link>
-            )}
+            {
+              user?.role === "Admin" && (
+                <Link
+                  href="/dashboard"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    nav("/dashboard");
+                  }}
+                >
+                  Dashboard
+                </Link>
+              ) 
+            }
 
             {user?.role === "Admin" && (
+              <>
+                <Link
+                  href="/manage/users"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    nav("/manage/users");
+                  }}
+                >
+                 Manage Users
+                </Link>
+                
+                <Link
+                  href="/manage/orders"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    nav("/manage/orders");
+                  }}
+                >
+                 Manage Orders
+                </Link>
+              </>
+            )}
+
+             {user?.role !== "Customer" && user && (
               <Link
-                href="/admin"
+                href="/manage/products"
                 onClick={(e) => {
                   e.preventDefault();
-                  nav("/admin");
+                  nav("/manage/products");
                 }}
               >
-                Admin
+              Manage Products
               </Link>
             )}
 
             {user?.role === "Customer" &&  (
-              // <Link 
-              //   href="/cart" 
-              //   onClick={(e) => {e.preventDefault(); nav("/cart")}}
-              //   >
-              //     Cart
-              // </Link>
-
                 <div>
-                  <DefaultButton text="Cart" onClick={openPanel} />
-                  <Panel
-                    isOpen={isOpen}
-                    onDismiss={dismissPanel}
-                    headerText="Cart Items"
-                    closeButtonAriaLabel="Close"
-                    onRenderFooterContent={onRenderFooterContent}
-                    // Stretch panel content to fill the available height so the footer is positioned
-                    // at the bottom of the page
-                    isFooterAtBottom={true}
-                  >
-                    {/* <AddToCart/> */}
-                  </Panel>
+                  <Cart24Regular style={{ cursor: "pointer", color: "#0078d4" }}  onClick={() => setIsCartOpen(true)} />
+                  
+                  <CartDrawer
+                    open={isCartOpen}
+                    onClose={() => setIsCartOpen(false)}
+                    onCheckout={() => {
+                      setIsCartOpen(false);
+                      nav("/checkout");
+                    }}
+                  />
                 </div>
             )}
 

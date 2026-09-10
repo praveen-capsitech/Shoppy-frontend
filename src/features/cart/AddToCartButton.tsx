@@ -18,12 +18,25 @@ export function AddToCartButton({ productId }: { productId: string }) {
     try {
       await cartOrderApi.addToCart(productId);
       setMessage("Added to cart.");
-    } catch {
-      setMessage("Unable to add this product to your cart.");
+    } catch (error: any) {
+      setMessage(error?.response?.data?.message ?? "Unable to add this product to your cart.");
     } finally {
       setBusy(false);
     }
   };
+
+  //  const remove = async () => {
+  //   setBusy(true);
+  //   setMessage("");
+  //   try {
+  //     await cartOrderApi.removeCartItem(productId);
+  //     setMessage("Removed from cart.");
+  //   } catch {
+  //     setMessage("Unable to remove this product from your cart.");
+  //   } finally {
+  //     setBusy(false);
+  //   }
+  // };
 
   return (
     <div className={styles.root}>
@@ -35,6 +48,15 @@ export function AddToCartButton({ productId }: { productId: string }) {
       >
         {busy ? "Adding..." : "Add to Cart"}
       </Button>
+      
+      {/* <Button
+        appearance="secondary"
+        icon={<Cart24Regular />}
+        disabled={busy}
+        onClick={() => void remove()}
+      >
+        {busy ? "Removing..." : "Remove from Cart"}
+      </Button> */}
       {message && <MessageBar intent={message.startsWith("Added") ? "success" : "error"}>{message}</MessageBar>}
     </div>
   );

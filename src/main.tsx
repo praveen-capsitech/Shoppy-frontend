@@ -10,12 +10,17 @@ import Manager from "./pages/Manager";
 import Products from "./pages/Products";
 import Register from "./pages/Register";
 import "./styles.css";
-// import AddToCart from "./pages/AddToCart";
 import { ManageOrders } from "./features/orders/ManageOrders";
 import { MyOrders } from "./features/orders/MyOrders";
 import { CodCheckout } from "./features/orders/CodCheckout";
+import ProductDetails from "./components/ProductDetails";
+import Dashboard from "./pages/Dashboard";
 
-// const nav = useNavigate();
+function CheckoutPage() {
+  const nav = useNavigate();
+
+  return <CodCheckout onSuccess={() => nav("/orders")} />;
+}
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   
@@ -25,24 +30,26 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Products />} />
+            <Route path="/products/:id" element={<ProductDetails />} />
+            <Route element={<ProtectedRoute roles={["Admin", "Customer"]} />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/register/manager" element={<Register />} />
 
             <Route element={<ProtectedRoute roles={["Manager", "Admin"]} />}>
-              <Route path="/manager" element={<Manager />} />
+              <Route path="/manage/products" element={<Manager />} />
               <Route path="/manage/orders" element={<ManageOrders />} />
             </Route>
 
             <Route element={<ProtectedRoute roles={["Customer"]} />}>
-              <Route path="/orders" element={<MyOrders />} />
-              <Route path="/checkout" element={
-                <CodCheckout 
-                // onSuccess={(order) => {nav(`/orders/${order.id}`)}} 
-                />} />
+              <Route path="/my-orders" element={<MyOrders />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
             </Route>
 
             <Route element={<ProtectedRoute roles={["Admin"]} />}>
-              <Route path="/admin" element={<Admin />} />
+              <Route path="/manage/users" element={<Admin />} />
             </Route>
             
           </Route>

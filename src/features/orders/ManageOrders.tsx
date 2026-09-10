@@ -49,6 +49,7 @@ export function ManageOrders() {
   useEffect(() => { void load(); }, []);
 
   const update = async (id: string, status: OrderStatus) => {
+    setError("");
     try {
       await cartOrderApi.updateOrderStatus(id, status);
       await load();
@@ -101,6 +102,7 @@ export function ManageOrders() {
                         if (data.optionValue) void update(order.id, data.optionValue as OrderStatus);
                       }}
                     >
+                      <Option value={order.status}>{order.status}</Option>
                       {statuses.map((status) => (
                         <Option key={status} value={status}>{status}</Option>
                       ))}
