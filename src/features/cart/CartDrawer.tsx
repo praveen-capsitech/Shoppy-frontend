@@ -32,7 +32,7 @@ const useStyles = makeStyles({
   },
   image: { width: "64px", height: "64px", objectFit: "cover", borderRadius: tokens.borderRadiusMedium },
   controls: { display: "flex", alignItems: "center", gap: tokens.spacingHorizontalS },
-  footer: { marginTop: "auto", display: "flex", flexDirection: "column", gap: tokens.spacingVerticalM },
+  footer: { marginTop: "auto", marginBottom: "20px", display: "flex", flexDirection: "column", gap: tokens.spacingVerticalM },
 });
 
 type Props = {

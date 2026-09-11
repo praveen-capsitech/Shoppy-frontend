@@ -36,43 +36,49 @@ export default function Admin() {
   return (
     <>
       <Title1>Admin dashboard</Title1>
-      <Table style={{ marginTop: 20 }}>
-        <TableHeader>
-          <TableRow>
-            <TableHeaderCell>Name</TableHeaderCell>
-            <TableHeaderCell>Email</TableHeaderCell>
-            <TableHeaderCell>Role</TableHeaderCell>
-            <TableHeaderCell>Status</TableHeaderCell>
-            <TableHeaderCell>Action</TableHeaderCell>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((u) => (
-            <TableRow key={u.id}>
-              <TableCell>{u.name}</TableCell>
-              <TableCell>{u.email}</TableCell>
-              <TableCell>
-                <Dropdown
-                  style={{ width: 120 }}
-                  value={u.role}
-                  onOptionSelect={(_, d) => role(u.id, d.optionValue as Role)}
-                  disabled={u.role === "Admin"}
-                >
-                  <Option value="Customer">Customer</Option>
-                  <Option value="Manager">Manager</Option>
-                  <Option value="Admin">Admin</Option>
-                </Dropdown>
-              </TableCell>
-              <TableCell>{u.isActive ? "Active" : "Disabled"}</TableCell>
-              <TableCell>
-                <Button onClick={() => status(u.id, !u.isActive)} disabled={u.role === "Admin"}>
-                  {u.isActive ? "Disable" : "Enable"}
-                </Button>
-              </TableCell>
+      <div style={{ marginTop: 20, overflowX: "auto" }}>
+        <Table
+          style={{
+            minWidth: 850,
+            gridTemplateColumns: "minmax(160px, 1fr) minmax(240px, 1.5fr) 180px 130px 140px",
+          }}
+        >
+          <TableHeader>
+            <TableRow>
+              <TableHeaderCell>Name</TableHeaderCell>
+              <TableHeaderCell>Email</TableHeaderCell>
+              <TableHeaderCell>Role</TableHeaderCell>
+              <TableHeaderCell>Status</TableHeaderCell>
+              <TableHeaderCell>Action</TableHeaderCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {users.map((u) => (
+              <TableRow key={u.id}>
+                <TableCell>{u.name}</TableCell>
+                <TableCell>{u.email}</TableCell>
+                <TableCell style={{ width: 50, marginRight: 10, marginLeft: 10 }}>
+                  <Dropdown
+                    value={u.role}
+                    onOptionSelect={(_, d) => role(u.id, d.optionValue as Role)}
+                    disabled={u.role === "Admin"}
+                  >
+                    <Option value="Customer">Customer</Option>
+                    <Option value="Manager">Manager</Option>
+                    <Option value="Admin">Admin</Option>
+                  </Dropdown>
+                </TableCell>
+                <TableCell>{u.isActive ? "Active" : "Disabled"}</TableCell>
+                <TableCell>
+                  <Button onClick={() => status(u.id, !u.isActive)} disabled={u.role === "Admin"}>
+                    {u.isActive ? "Disable" : "Enable"}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </>
   );
 }

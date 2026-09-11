@@ -1,6 +1,12 @@
 import {
   Button,
   Card,
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
   Field,
   Input,
   MessageBar,
@@ -20,16 +26,26 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [busy, setBusy] = useState(false);
   
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
     setBusy(true);
     
     try {
-      await register(name, email, password, role);
-      nav(isManagerRegistration ? "/manage/products" : "/dashboard");
+      const pendingApproval = await register(name, email, password, role);
+      if (pendingApproval) {
+        setSuccess("Your manager account was created. An admin must approve it before you can sign in.");
+      } else {
+        if (role === "Customer") {
+          nav("/");
+        } else {  
+        nav("/dashboard");
+        }
+      }
     } catch (err: any) {
       setError(err.response?.data?.message ?? "Registration failed.");
     } finally {
@@ -81,6 +97,26 @@ export default function Register() {
           </span>
         )}
       </form>
+      <Dialog
+        open={Boolean(success)}
+        onOpenChange={(_, data) => {
+          if (!data.open) {
+            setSuccess("");
+          }
+        }}
+      >
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>Manager account created</DialogTitle>
+            <DialogContent>{success}</DialogContent>
+            <DialogActions>
+              <Button appearance="primary" onClick={() => nav("/login")}>
+                Go to sign in
+              </Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
     </Card>
   );
 }

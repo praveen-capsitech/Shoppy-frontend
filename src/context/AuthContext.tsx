@@ -17,7 +17,7 @@ interface AuthContextValue {
     email: string,
     password: string,
     role?: Extract<Role, "Customer" | "Manager">,
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -53,12 +53,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     authenticate("/auth/login", { email, password });
 
 
-  const register = (
+  const register = async (
     name: string,
     email: string,
     password: string,
     role: Extract<Role, "Customer" | "Manager"> = "Customer",
-  ) => authenticate("/auth/register", { name, email, password, role });
+  ) =>
+    api.post("/auth/register", { name, email, password, role }).then((r) => {
+      if (r.status === 202) return true;
+
+      localStorage.setItem("shoppy_token", r.data.token);
+      setUser(r.data.user);
+      return false;
+    });
 
 
   const logout = () => {
