@@ -18,7 +18,7 @@ import {
   Cart24Regular,
 } from "@fluentui/react-icons";
 import { useEffect, useState } from "react";
-import { cartOrderApi, Cart } from "../../api/cartOrderApi";
+import { cartOrderApi, Cart, notifyCartUpdated } from "../../api/cartOrderApi";
 
 const useStyles = makeStyles({
   body: { display: "flex", flexDirection: "column", gap: tokens.spacingVerticalL },
@@ -65,7 +65,9 @@ export function CartDrawer({ open, onClose, onCheckout }: Props) {
 
   const update = async (productId: string, quantity: number) => {
     try {
-      setCart((await cartOrderApi.updateCartItem(productId, quantity)).data);
+      const { data } = await cartOrderApi.updateCartItem(productId, quantity);
+      setCart(data);
+      notifyCartUpdated(data);
     } catch {
       setError("Unable to update the cart.");
     }
@@ -73,7 +75,9 @@ export function CartDrawer({ open, onClose, onCheckout }: Props) {
 
   const remove = async (productId: string) => {
     try {
-      setCart((await cartOrderApi.removeCartItem(productId)).data);
+      const { data } = await cartOrderApi.removeCartItem(productId);
+      setCart(data);
+      notifyCartUpdated(data);
     } catch {
       setError("Unable to remove the item.");
     }
@@ -130,11 +134,12 @@ export function CartDrawer({ open, onClose, onCheckout }: Props) {
               Total: ₹{cart.subtotal.toFixed(2)}
             </Text>
             <Button appearance="primary" size="large" onClick={onCheckout}>
-              Proceed to COD Checkout
+              Proceed to Checkout
             </Button>
           </div>
         )}
+        
       </DrawerBody>
     </Drawer>
   );
-}
+}   

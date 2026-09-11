@@ -58,14 +58,16 @@ export default function Products() {
       ) : (
         <div className={s.grid}>
           {filtered.map((p) => (
-            <Card key={p.id} className={s.card} onClick={() => navigate(`/products/${p.id}`)}>
-              {p.imageUrl && (
-                <img className={s.img} src={p.imageUrl} alt={p.name} />
-              )}
-              <h2>{p.name}</h2>
-              <p>{p.description}</p>
-              <b>₹{p.price.toFixed(2)}</b>
-              <p>Stock: {p.stock}</p>
+            <Card key={p.id} className={s.card}>
+              <div onClick={() => navigate(`/products/${p.id}`)} style={{ cursor: "pointer" }}>
+                {p.imageUrl && (
+                  <img className={s.img} src={p.imageUrl} alt={p.name} />
+                )}
+                <h2>{p.name}</h2>
+                <p>{p.description}</p>
+                <b>₹{p.price.toFixed(2)}</b>
+                <p>Stock: {p.stock}</p>
+              </div>
               
               {
                 p?.stock === 0 ? (

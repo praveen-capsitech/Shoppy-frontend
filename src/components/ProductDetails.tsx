@@ -87,9 +87,11 @@ export default function ProductDetails() {
             {user?.role === "Customer" && product.stock > 0 && (
               <AddToCartButton productId={product.id} />
             )}
+            
             {user?.role === "Customer" && product.stock === 0 && (
               <Button disabled>Currently unavailable</Button>
             )}
+            
             {/* {(user?.role === "Admin" || user?.role === "Manager") && (
               <Button appearance="primary" onClick={() => navigate("/manage/products")}>
                 Manage products

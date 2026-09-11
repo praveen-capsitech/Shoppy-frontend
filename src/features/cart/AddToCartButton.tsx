@@ -1,7 +1,7 @@
 import { Button, MessageBar, makeStyles, tokens } from "@fluentui/react-components";
 import { Cart24Regular } from "@fluentui/react-icons";
 import { useState } from "react";
-import { cartOrderApi } from "../../api/cartOrderApi";
+import { cartOrderApi, notifyCartUpdated } from "../../api/cartOrderApi";
 
 const useStyles = makeStyles({
   root: { display: "flex", flexDirection: "column", gap: tokens.spacingVerticalS },
@@ -16,7 +16,8 @@ export function AddToCartButton({ productId }: { productId: string }) {
     setBusy(true);
     setMessage("");
     try {
-      await cartOrderApi.addToCart(productId);
+      const { data } = await cartOrderApi.addToCart(productId);
+      notifyCartUpdated(data);
       setMessage("Added to cart.");
     } catch (error: any) {
       setMessage(error?.response?.data?.message ?? "Unable to add this product to your cart.");

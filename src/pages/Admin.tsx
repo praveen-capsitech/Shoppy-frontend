@@ -53,8 +53,10 @@ export default function Admin() {
               <TableCell>{u.email}</TableCell>
               <TableCell>
                 <Dropdown
+                  style={{ width: 120 }}
                   value={u.role}
                   onOptionSelect={(_, d) => role(u.id, d.optionValue as Role)}
+                  disabled={u.role === "Admin"}
                 >
                   <Option value="Customer">Customer</Option>
                   <Option value="Manager">Manager</Option>
@@ -63,7 +65,7 @@ export default function Admin() {
               </TableCell>
               <TableCell>{u.isActive ? "Active" : "Disabled"}</TableCell>
               <TableCell>
-                <Button onClick={() => status(u.id, !u.isActive)}>
+                <Button onClick={() => status(u.id, !u.isActive)} disabled={u.role === "Admin"}>
                   {u.isActive ? "Disable" : "Enable"}
                 </Button>
               </TableCell>

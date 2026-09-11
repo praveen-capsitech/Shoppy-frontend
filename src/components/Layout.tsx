@@ -18,6 +18,7 @@ import { IContextualMenuProps } from '@fluentui/react/lib/ContextualMenu';
 import { useConst } from '@fluentui/react-hooks';
 import { DefaultButton } from '@fluentui/react/lib/Button';
 import { CartDrawer } from '../features/cart/CartDrawer';
+import { cartOrderApi, Cart } from '../api/cartOrderApi';
 
 const useStyles = makeStyles({
   root: { minHeight: "100vh", backgroundColor: tokens.colorNeutralBackground2 },
@@ -32,6 +33,22 @@ const useStyles = makeStyles({
   nav: { display: "flex", gap: "18px", alignItems: "center" },
   content: {  margin: "0 auto", padding: "44px 30px" },
   brand: { fontWeight: 700, cursor: "pointer" },
+  cartButton: { position: "relative", display: "inline-flex", cursor: "pointer" },
+  cartBadge: {
+    position: "absolute",
+    top: "-8px",
+    right: "-10px",
+    minWidth: "18px",
+    height: "18px",
+    padding: "0 4px",
+    borderRadius: "9px",
+    backgroundColor: "#d13438",
+    color: "#ffffff",
+    fontSize: "11px",
+    fontWeight: 700,
+    lineHeight: "18px",
+    textAlign: "center",
+  },
 });
 
 
@@ -39,6 +56,24 @@ export default function Layout() {
   const s = useStyles();
   const { user, logout } = useAuth();
   const nav = useNavigate();
+  const [cartCount, setCartCount] = React.useState(0);
+
+  React.useEffect(() => {
+    if (user?.role !== "Customer") {
+      setCartCount(0);
+      return;
+    }
+
+    void cartOrderApi.getCart().then(({ data }) => setCartCount(data.totalItems));
+
+    const handleCartUpdated = (event: Event) => {
+      const cart = (event as CustomEvent<Cart>).detail;
+      setCartCount(cart.totalItems);
+    };
+
+    window.addEventListener("cart-updated", handleCartUpdated);
+    return () => window.removeEventListener("cart-updated", handleCartUpdated);
+  }, [user?.role]);
 
 
   const menuProps = useConst<IContextualMenuProps>(() => ({
@@ -109,9 +144,11 @@ export default function Layout() {
             )}
 
             {user?.role === "Customer" &&  (
-                <div>
-                  <Cart24Regular style={{ cursor: "pointer", color: "#0078d4" }}  onClick={() => setIsCartOpen(true)} />
-                  
+                <>
+                  <div className={s.cartButton} onClick={() => setIsCartOpen(true)}>
+                    <Cart24Regular style={{ color: "#0078d4" }} aria-label="Open shopping cart" />
+                    {cartCount > 0 && <span className={s.cartBadge}>{cartCount > 99 ? "99+" : cartCount}</span>}
+                  </div>
                   <CartDrawer
                     open={isCartOpen}
                     onClose={() => setIsCartOpen(false)}
@@ -120,7 +157,7 @@ export default function Layout() {
                       nav("/checkout");
                     }}
                   />
-                </div>
+                </>
             )}
 
             {user ? (

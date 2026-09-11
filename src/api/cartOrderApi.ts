@@ -17,6 +17,10 @@ export type Cart = {
   totalItems: number;
 };
 
+export const notifyCartUpdated = (cart: Cart) => {
+  window.dispatchEvent(new CustomEvent<Cart>("cart-updated", { detail: cart }));
+};
+
 export type OrderStatus =
   | "Pending"
   | "Confirmed"

@@ -50,7 +50,7 @@ export default function Manager() {
   const [error, setError] = useState("");
 
   const load = () =>
-    api.get<Product[]>("/products").then((r) => setProducts(r.data));
+    api.get<Product[]>("/products/managed").then((r) => setProducts(r.data));
 
   useEffect(() => {
     load();
@@ -68,6 +68,8 @@ export default function Manager() {
       });
 
       setForm(empty);
+      hideModal();
+      
       load();
     } catch (err: any) {
       setError(
