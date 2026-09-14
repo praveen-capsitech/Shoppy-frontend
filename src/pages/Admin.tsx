@@ -49,7 +49,7 @@ export default function Admin() {
               <TableHeaderCell>Email</TableHeaderCell>
               <TableHeaderCell>Role</TableHeaderCell>
               <TableHeaderCell>Status</TableHeaderCell>
-              <TableHeaderCell>Action</TableHeaderCell>
+              <TableHeaderCell>Status Action</TableHeaderCell>
             </TableRow>
           </TableHeader>
           <TableBody>
