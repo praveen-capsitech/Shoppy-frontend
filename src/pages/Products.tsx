@@ -19,7 +19,16 @@ const useStyles = makeStyles({
     gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
     gap: "18px",
   },
-  card: { padding: "18px",cursor:"pointer" },
+  card: { padding: "18px",
+          cursor:"pointer", 
+          display: "flex", 
+          flexDirection: "column", 
+          gap: "20px",
+          justifyContent: "space-between", 
+          border: "1px solid #eaeaea", 
+          borderRadius: "8px", 
+          backgroundColor: "#fff" 
+        },
   img: { width: "100%", height: "170px", objectFit: "cover", borderRadius: "8px" },
 });
 
@@ -64,9 +73,9 @@ export default function Products() {
                   <img className={s.img} src={p.imageUrl} alt={p.name} />
                 )}
                 <h2>{p.name}</h2>
-                <p>{p.description}</p>
-                <b>₹{p.price.toFixed(2)}</b>
-                <p>Stock: {p.stock}</p>
+                <p>{p.description ? p.description.substring(0, 100) + " " + "..." : "No description available"}</p>
+                <b>₹{p.price.toFixed(2)}/-</b>
+                {/* <p>Stock: {p.stock}</p> */}
               </div>
               
               {

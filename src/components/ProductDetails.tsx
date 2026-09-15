@@ -61,6 +61,10 @@ export default function ProductDetails() {
     }
   };
 
+  const updateProduct = (productId: string) => {
+    // navigate(`/manage/products/${productId}`);
+  }
+
   if (loading) return <Spinner label="Loading product details..." />;
   if (error || !product) return <MessageBar intent="error">{error || "Product not found."}</MessageBar>;
 
@@ -98,9 +102,14 @@ export default function ProductDetails() {
               </Button>
             )} */}
             {(user?.role === "Admin" || user?.role === "Manager") && (
+              <>
+              <Button appearance="primary" onClick={() => updateProduct(product.id)}>
+                Edit product
+              </Button>
               <Button appearance="secondary" onClick={() => void remove()}>
                 Delete product
               </Button>
+              </>
             )}
           </div>
         </div>

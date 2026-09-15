@@ -43,6 +43,7 @@ export default function Manager() {
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] = useBoolean(false);
   const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(false);
   const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
+  const [isEditing, setIsEditing] = useState(false);
   const titleId = useId('title');
  
   const [products, setProducts] = useState<Product[]>([]);
@@ -89,6 +90,35 @@ export default function Manager() {
     }
   };
 
+  // Update function for the product 
+  const updateProduct = async (id: string) => {
+    console.log("Updating product with ID:", id, "and form data:", form);
+
+    try {
+      await api.put("/products/" + id, {
+        ...form,
+        price: Number(form.price),
+        stock: Number(form.stock),
+        name: form.name,
+        description: form.description,
+        category: form.category,
+        imageUrl: form.imageUrl,  
+      });
+
+      load();
+      hideModal();
+      setIsEditing(false);
+      setForm(empty); // Reset the form after updating
+
+    } catch (err: any) {
+      setError(
+        err.response?.data?.message ?? "Could not update product."
+      );
+    }
+  };
+
+
+
   const updateField = (key: keyof typeof form, value: string) => {
     setForm((prev) => ({
       ...prev,
@@ -121,7 +151,7 @@ export default function Manager() {
           </div>
 
           <div>
-              <DefaultButton onClick={showModal} text="Add Product" />
+              <DefaultButton onClick={()=>{showModal(); setIsEditing(false);}} text="Add Product" />
           </div>
       </div>
 
@@ -158,12 +188,36 @@ export default function Manager() {
                   transition: "box-shadow 0.2s ease",
                 }}
               >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    fontSize: 12,
+                    color: "black",
+                    cursor: "pointer",
+                    background: "#f7f43646",
+                    padding: "4px 8px",
+                    borderRadius: 12,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    isModalOpen ? hideModal() : showModal();
+                    setIsEditing(true);
+                    setForm(p);
+                    // console.log("Editing product:", p);
+                  }}
+                >
+                  Edit
+                </div>
+
                 {/* Product Image */}
                 <div
                   style={{
-                    width: 90,
-                    height: 90,
-                    minWidth: 90,
+                    width: 150,
+                    height: 150,
+                    minWidth: 150,
                     borderRadius: 8,
                     overflow: "hidden",
                     background: "#f5f5f5",
@@ -175,7 +229,7 @@ export default function Manager() {
                   <img
                     src={
                       p.imageUrl ||
-                      "https://placehold.co/180x180?text=No+Image"
+                      "https://placehold.co/120x120?text=No+Image"
                     }
                     alt={p.name}
                     style={{
@@ -186,7 +240,7 @@ export default function Manager() {
                     }}
                     onError={(e) => {
                       e.currentTarget.src =
-                        "https://placehold.co/180x180?text=No+Image";
+                        "https://placehold.co/120x120?text=No+Image";
                     }}
                   />
                 </div>
@@ -247,7 +301,7 @@ export default function Manager() {
                       whiteSpace: "wrap",
                     }}
                   >
-                    {p.description || "No description available"}
+                    {p.description ? p.description.substring(0, 100) + " " + "..." : "No description available"}
                   </p>
 
                   {/* Price + Stock */}
@@ -266,7 +320,7 @@ export default function Manager() {
                         color: "#1a1a1a",
                       }}
                     >
-                      ₹{p.price.toLocaleString("en-IN")}
+                      ₹{p.price.toLocaleString("en-IN")}/-
                     </span>
 
                     <span
@@ -346,7 +400,7 @@ export default function Manager() {
       >
         <div className={contentStyles.header}>
           <h2 className={contentStyles.heading} id={titleId}>
-            Add Product
+            {isEditing ? "Edit Product" : "Add Product"}
           </h2>
           <IconButton
             styles={iconButtonStyles}
@@ -356,7 +410,7 @@ export default function Manager() {
           />
         </div>
         <div className={contentStyles.body}>
-          <form onSubmit={create}>
+          <form onSubmit={isEditing ? (e) => { e.preventDefault(); updateProduct(form.id); } : create}>
             <div
               style={{
                 display: "grid",
@@ -378,14 +432,29 @@ export default function Manager() {
 
               {/* Category */}
               <Field label="Category" required>
-                <Input
+                {/* <Input
                   style={{ border: "1px solid #ccc", borderRadius: 4, padding: "8px 12px" }}
                   placeholder="e.g. Electronics"
                   value={form.category}
                   onChange={(_, data) =>
                     updateField("category", data.value)
                   }
-                />
+                /> */}
+
+                <select
+                  style={{ border: "1px solid #ccc", borderRadius: 4, padding: "8px 12px" }}
+                  value={form.category}
+                  onChange={(event) =>
+                    updateField("category", event.currentTarget.value)
+                  }
+                >
+                  <option value="">Select category</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Books">Books</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Clothing">Fashion</option>
+                  <option value="Home & Kitchen">Home & Kitchen</option>
+                </select>
               </Field>
 
               {/* Price */}
@@ -456,13 +525,12 @@ export default function Manager() {
                 borderTop: "1px solid #eee",
               }}
             >
-              <Button
-                style={{ border: "1px solid #ccc", borderRadius: 4, padding: "8px 12px" }}
-                appearance="primary"
-                type="submit"
-              >
-                Create Product
-              </Button>
+              {isEditing ? (
+                <DefaultButton type="submit" text="Update Product" />
+              ) : (
+                <DefaultButton type="submit" text="Add Product" />
+              )}
+
             </div>
           </form>
         </div>

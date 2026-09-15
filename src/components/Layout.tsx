@@ -128,6 +128,8 @@ export default function Layout() {
                 >
                  Manage Orders
                 </Link>
+
+                
               </>
             )}
 
@@ -157,6 +159,17 @@ export default function Layout() {
                       nav("/checkout");
                     }}
                   />
+
+                  <Link
+                    href="/my-orders"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      nav("/my-orders");
+                    }}
+                  >
+                  My Orders
+                  </Link>
+                  
                 </>
             )}
 
