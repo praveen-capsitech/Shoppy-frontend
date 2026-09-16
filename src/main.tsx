@@ -19,7 +19,7 @@ import Dashboard from "./pages/Dashboard";
 function CheckoutPage() {
   const nav = useNavigate();
 
-  return <CodCheckout onSuccess={() => nav("/orders")} />;
+  return <CodCheckout onSuccess={() => nav("/my-orders")} />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -43,7 +43,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               <Route path="/manage/orders" element={<ManageOrders />} />
             </Route>
 
-            <Route element={<ProtectedRoute roles={["Customer"]} />}>
+            <Route element={<ProtectedRoute roles={["Customer", "Manager", "Admin"]} />}>
               <Route path="/my-orders" element={<MyOrders />} />
               <Route path="/checkout" element={<CheckoutPage />} />
             </Route>

@@ -31,6 +31,7 @@ export default function ProductDetails() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isModelOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -61,9 +62,9 @@ export default function ProductDetails() {
     }
   };
 
-  const updateProduct = (productId: string) => {
-    // navigate(`/manage/products/${productId}`);
-  }
+  // const updateProduct = (productId: string) => {
+  //   // navigate(`/manage/products/${productId}`);
+  // }
 
   if (loading) return <Spinner label="Loading product details..." />;
   if (error || !product) return <MessageBar intent="error">{error || "Product not found."}</MessageBar>;
@@ -76,7 +77,7 @@ export default function ProductDetails() {
       <Card className={styles.card}>
         <img
           className={styles.image}
-          src={product.imageUrl || "https://placehold.co/600x600?text=No+Image"}
+          src={product.imageUrl || "https://placehold.co/480x480?text=No+Image"}
           alt={product.name}
         />
         <div className={styles.details}>
@@ -103,9 +104,9 @@ export default function ProductDetails() {
             )} */}
             {(user?.role === "Admin" || user?.role === "Manager") && (
               <>
-              <Button appearance="primary" onClick={() => updateProduct(product.id)}>
+              {/* <Button style={{ marginRight: 10 }} appearance="outline" onClick={() => updateProduct(product.id)}>
                 Edit product
-              </Button>
+              </Button> */}
               <Button appearance="secondary" onClick={() => void remove()}>
                 Delete product
               </Button>
@@ -114,6 +115,13 @@ export default function ProductDetails() {
           </div>
         </div>
       </Card>
+
+      {isModelOpen && (
+        <div>
+          {/* Modal content for editing product */}
+          
+        </div>
+      )}
     </div>
   );
 }

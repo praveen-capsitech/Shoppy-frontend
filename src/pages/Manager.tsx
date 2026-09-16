@@ -4,13 +4,8 @@ import {
   getTheme,
   mergeStyleSets,
   FontWeights,
-  ContextualMenu,
-  Toggle,
   Modal,
-  IDragOptions,
   IIconProps,
-  Stack,
-  IStackProps,
 } from '@fluentui/react';
 import { DefaultButton, IconButton, IButtonStyles } from '@fluentui/react/lib/Button';
 
@@ -41,9 +36,8 @@ const empty = {
 export default function Manager() {
   const navigate = useNavigate();
   const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] = useBoolean(false);
-  const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(false);
-  const [keepInBounds, { toggle: toggleKeepInBounds }] = useBoolean(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const titleId = useId('title');
  
   const [products, setProducts] = useState<Product[]>([]);
@@ -92,7 +86,7 @@ export default function Manager() {
 
   // Update function for the product 
   const updateProduct = async (id: string) => {
-    console.log("Updating product with ID:", id, "and form data:", form);
+    // console.log("Updating product with ID:", id, "and form data:", form);
 
     try {
       await api.put("/products/" + id, {
@@ -116,7 +110,6 @@ export default function Manager() {
       );
     }
   };
-
 
 
   const updateField = (key: keyof typeof form, value: string) => {
@@ -205,7 +198,15 @@ export default function Manager() {
                     e.stopPropagation();
                     isModalOpen ? hideModal() : showModal();
                     setIsEditing(true);
-                    setForm(p);
+                    setEditingId(p.id);
+                    setForm({
+                      name: p.name,
+                      description: p.description,
+                      price: String(p.price),
+                      stock: String(p.stock),
+                      category: p.category,
+                      imageUrl: p.imageUrl,
+                    });
                     // console.log("Editing product:", p);
                   }}
                 >
@@ -410,7 +411,7 @@ export default function Manager() {
           />
         </div>
         <div className={contentStyles.body}>
-          <form onSubmit={isEditing ? (e) => { e.preventDefault(); updateProduct(form.id); } : create}>
+          <form onSubmit={isEditing ? (e) => { e.preventDefault(); if (editingId) updateProduct(editingId); } : create}>
             <div
               style={{
                 display: "grid",
