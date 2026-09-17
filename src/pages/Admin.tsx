@@ -35,7 +35,7 @@ export default function Admin() {
   
   return (
     <>
-      <Title1>Admin dashboard</Title1>
+      <Title1>User Management</Title1>
       <div style={{ marginTop: 20, overflowX: "auto" }}>
         <Table
           style={{
@@ -68,7 +68,9 @@ export default function Admin() {
                     <Option value="Admin">Admin</Option>
                   </Dropdown>
                 </TableCell>
-                <TableCell>{u.isActive ? "Active" : "Disabled"}</TableCell>
+                <TableCell style={{ color: u.isActive ? "green" : "red" }}>
+                  {u.isActive ? "Active" : "Disabled"}
+                </TableCell>
                 <TableCell>
                   <Button onClick={() => status(u.id, !u.isActive)} disabled={u.role === "Admin"}>
                     {u.isActive ? "Disable" : "Enable"}

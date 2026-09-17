@@ -40,10 +40,10 @@ const statusLabels: Order["status"][] = [
   "Pending", "Confirmed", "Processing", "Shipped", "Delivered", "Cancelled",
 ];
 
-function StatCard({ label, value, detail }: { label: string; value: string | number; detail: string }) {
+function StatCard({ label, value, detail, onClick }: { label: string; value: string | number; detail: string; onClick?: () => void | Promise<void> }) {
   const styles = useStyles();
   return (
-    <Card className={styles.stat}>
+    <Card className={styles.stat} onClick={onClick}>
       <Text>{label}</Text>
       <Text size={700} weight="semibold" className={styles.statValue}>{value}</Text>
       <Text size={200}>{detail}</Text>
@@ -62,18 +62,34 @@ function StatusChart({ orders }: { orders: Order[] }) {
 
   return (
     <Card className={styles.panel}>
-      <Text size={500} weight="semibold">Order status overview</Text>
+      <Text size={500} weight="semibold">Order status analysis</Text>
       <svg className={styles.chart} viewBox={`0 0 ${width} 230`} role="img" aria-label="Orders by status">
         {counts.map((count, index) => {
           const height = (count / max) * chartHeight;
           const x = 25 + index * (barWidth + gap);
           const y = 185 - height;
+          
           return (
             <g key={statusLabels[index]}>
-              <rect x={x} y={y} width={barWidth} height={height || 2} rx="5" fill="#0f6cbd" />
+              <rect x={x} y={y} width={barWidth} height={height || 2} rx="5" 
+              fill={statusLabels[index] === "Pending" ? "orange" : 
+                          statusLabels[index] === "Confirmed" ? "blue" : 
+                          statusLabels[index] === "Processing" ? "purple" : 
+                          statusLabels[index] === "Shipped" ? "teal" : 
+                          statusLabels[index] === "Delivered" ? "green" : 
+                          statusLabels[index] === "Cancelled" ? "red" : 
+                          "black"
+                          } />
               <text x={x + barWidth / 2} y={y - 8} textAnchor="middle" fontSize="13" fill="#242424">{count}</text>
-              <text x={x + barWidth / 2} y="207" textAnchor="middle" fontSize="10" fill="#424242">
-                {statusLabels[index].slice(0, 5)}
+              <text x={x + barWidth / 2} y="207" textAnchor="middle" fontSize="10"  fill={statusLabels[index] === "Pending" ? "orange" : 
+                          statusLabels[index] === "Confirmed" ? "blue" : 
+                          statusLabels[index] === "Processing" ? "purple" : 
+                          statusLabels[index] === "Shipped" ? "teal" : 
+                          statusLabels[index] === "Delivered" ? "green" : 
+                          statusLabels[index] === "Cancelled" ? "red" : 
+                          "black"
+                          }>
+                {statusLabels[index]}
               </text>
             </g>
           );
@@ -145,10 +161,10 @@ export default function Dashboard() {
       {error && <MessageBar intent="error">{error}</MessageBar>}
 
       <div className={styles.stats}>
-        <StatCard label={isAdmin ? "Total products" : "Products available"} value={data.products.length} detail={`${data.products.filter((item) => item.stock > 0).length} in stock`} />
-        <StatCard label={isAdmin ? "Total orders" : "My orders"} value={data.orders.length} detail={isAdmin ? "All customer orders" : "Orders placed"} />
+        <StatCard onClick={() => navigate(isAdmin ? "/manage/products" : "/")} label={isAdmin ? "Total products" : "Products available"} value={data.products.length} detail={`${data.products.filter((item) => item.stock > 0).length} in stock`} />
+        <StatCard onClick={() => navigate(isAdmin ? "/manage/orders" : "/my-orders")} label={isAdmin ? "Total orders" : "My orders"} value={data.orders.length} detail={isAdmin ? "All customer orders" : "Orders placed"} />
+        <StatCard onClick={()=> navigate(isAdmin ? "/manage/users" : "/")} label={isAdmin ? "Active users" : "Cart items"} value={isAdmin ? activeUsers : (data.cart?.totalItems ?? 0)} detail={isAdmin ? `${data.users.length} registered users` : "Ready for checkout"} />
         <StatCard label={isAdmin ? "Revenue" : "Total spent"} value={`₹${totalRevenue.toFixed(2)}`} detail="Across loaded orders" />
-        <StatCard label={isAdmin ? "Active users" : "Cart items"} value={isAdmin ? activeUsers : (data.cart?.totalItems ?? 0)} detail={isAdmin ? `${data.users.length} registered users` : "Ready for checkout"} />
       </div>
 
       <div className={styles.panels}>
@@ -156,7 +172,7 @@ export default function Dashboard() {
         <Card className={styles.panel}>
           <Text size={500} weight="semibold">Quick actions</Text>
           <div className={styles.actions} style={{ marginTop: "16px" }}>
-            {isAdmin ? (
+            {isAdmin || user?.role === "Manager" ? (
               <>
                 <Button onClick={() => navigate("/manage/orders")}>Manage orders</Button>
                 <Button onClick={() => navigate("/manage/products")}>Manage products</Button>

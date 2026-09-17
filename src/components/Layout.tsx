@@ -30,7 +30,12 @@ const useStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground1,
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
   },
-  nav: { display: "flex", gap: "18px", alignItems: "center" },
+  nav: { display: "flex", 
+    gap: "18px", 
+    alignItems: "center",
+    flexWrap: "wrap",
+  // textDecoration: (isActiveNav: boolean) => (isActiveNav ? "underline" : "none"),
+  },
   content: {  margin: "0 auto", padding: "44px 30px" },
   brand: { fontWeight: 700, cursor: "pointer" },
   cartButton: { position: "relative", display: "inline-flex", cursor: "pointer" },
@@ -118,7 +123,21 @@ export default function Layout() {
                 >
                  Manage Users
                 </Link>
-                
+              </>
+            )}
+
+             {user?.role !== "Customer" && user && (
+              <>
+                <Link
+                  href="/manage/products"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    nav("/manage/products");
+                  }}
+                >
+                  Manage Products
+                </Link>
+
                 <Link
                   href="/manage/orders"
                   onClick={(e) => {
@@ -126,23 +145,9 @@ export default function Layout() {
                     nav("/manage/orders");
                   }}
                 >
-                 Manage Orders
+                  Manage Orders
                 </Link>
-
-                
               </>
-            )}
-
-             {user?.role !== "Customer" && user && (
-              <Link
-                href="/manage/products"
-                onClick={(e) => {
-                  e.preventDefault();
-                  nav("/manage/products");
-                }}
-              >
-              Manage Products
-              </Link>
             )}
 
             {/* {user?.role === "Customer" &&  ( */}
@@ -165,6 +170,7 @@ export default function Layout() {
                     onClick={(e) => {
                       e.preventDefault();
                       nav("/my-orders");
+
                     }}
                   >
                   My Orders
