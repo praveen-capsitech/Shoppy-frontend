@@ -150,7 +150,7 @@ export default function Layout() {
               </>
             )}
 
-            {/* {user?.role === "Customer" &&  ( */}
+            {user?.role === "Customer" &&  (
                 <>
                   <div className={s.cartButton} onClick={() => setIsCartOpen(true)}>
                     <Cart24Regular style={{ color: "#0078d4" }} aria-label="Open shopping cart" />
@@ -177,7 +177,7 @@ export default function Layout() {
                   </Link>
                   
                 </>
-            {/* )} */}
+            )} 
 
             {user ? (
               <>

@@ -20,7 +20,8 @@ export function AddToCartButton({ productId }: { productId: string }) {
       notifyCartUpdated(data);
       setMessage("Added to cart.");
     } catch (error: any) {
-      setMessage(error?.response?.data?.message ?? "Unable to add this product to your cart.");
+      // console.log("Error message: ", error?.response?.statusText);
+      setMessage(error?.response?.statusText ?? "Unable to add this product to your cart.");
     } finally {
       setBusy(false);
     }

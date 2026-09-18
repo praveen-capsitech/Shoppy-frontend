@@ -12,7 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AddToCartButton } from "../features/cart/AddToCartButton";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../api/client";
-import type { Product } from "../types";
+import type { ProductDetails as ProductDetailsType } from "../types";
 
 const useStyles = makeStyles({
   page: { maxWidth: "960px", margin: "0 auto" },
@@ -28,7 +28,7 @@ export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<ProductDetailsType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isModelOpen, setIsModalOpen] = useState(false);
@@ -40,7 +40,7 @@ export default function ProductDetails() {
       return;
     }
 
-    api.get<Product>(`/products/${id}`)
+    api.get<ProductDetailsType>(`/products/${id}`)
       .then((response) => setProduct(response.data))
       .catch((requestError) => {
         setError(requestError.response?.status === 404
@@ -58,13 +58,14 @@ export default function ProductDetails() {
       await api.delete(`/products/${product.id}`);
       navigate(user?.role === "Customer" ? "/" : "/manager");
     } catch (requestError: any) {
-      setError(requestError.response?.data?.message ?? "Unable to delete product.");
+      setError(requestError.response?.statusText ?? "Unable to delete product.");
     }
   };
 
   // const updateProduct = (productId: string) => {
   //   // navigate(`/manage/products/${productId}`);
   // }
+
 
   if (loading) return <Spinner label="Loading product details..." />;
   if (error || !product) return <MessageBar intent="error">{error || "Product not found."}</MessageBar>;
@@ -87,6 +88,10 @@ export default function ProductDetails() {
           <div className={styles.meta}>
             <Text>Category: {product.category}</Text>
             <Text>Stock: {product.stock}</Text>
+          </div>
+          <div className={styles.meta}>
+            <Text>Product Owner: {product.ownerName}</Text>
+            <Text>Created at: {new Date(product.createdAt).toLocaleString()}</Text>
           </div>
           <div className={styles.actions}>
             {user?.role === "Customer" && product.stock > 0 && (

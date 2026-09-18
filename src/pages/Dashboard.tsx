@@ -127,7 +127,7 @@ export default function Dashboard() {
           setData({ products: products.data, orders: orders.data, cart: cart.data, users: [] });
         }
       } catch (requestError: any) {
-        setError(requestError.response?.data?.message ?? "Unable to load dashboard data.");
+        setError(requestError.response?.statusText ?? "Unable to load dashboard data.");
       } finally {
         setLoading(false);
       }

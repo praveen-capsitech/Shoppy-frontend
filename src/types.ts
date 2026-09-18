@@ -19,6 +19,9 @@ export interface Product {
   imageUrl: string;
   createdAt: string;
 }
+export interface ProductDetails extends Product {
+  ownerName: string;
+}
 export interface AdminUser extends User {
   isActive: boolean;
   createdAt: string;
